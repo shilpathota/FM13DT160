@@ -3,7 +3,7 @@ package com.fmsh.nfcinstruct.utils;
 
 import android.util.Log;
 
-import com.fmsh.nfcinstruct.BuildConfig;
+//import com.fmsh.nfcinstruct.BuildConfig;
 
 /**
  * Created by wuyajiang on 2018/3/7.
@@ -13,7 +13,7 @@ public class LogUtil {
      * 是否开启debug
      * 注意：使用Eclipse打包的时候记得取消Build Automatically，否则一直是true
      */
-    private static boolean isDebug= BuildConfig.DEBUG;
+    private static boolean isDebug= true;
     public static String TAG = "NFCTool";
 
     public static void v(Object msg){

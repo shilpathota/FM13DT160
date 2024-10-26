@@ -8,9 +8,10 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.viewbinding.ViewBinding;
 import com.fmsh.temperature.tools.BroadcastManager;
 import com.fmsh.temperature.tools.CommThread;
 import com.fmsh.temperature.util.ActivityUtils;
@@ -21,7 +22,6 @@ import com.fmsh.temperature.util.NFCUtils;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
 
-import butterknife.ButterKnife;
 
 /**
  * @author wuyajiang
@@ -40,11 +40,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     public Tag mTag;
     private QMUITipDialog mTipDialog;
     public boolean isSendBroadCast = false;
+    private ViewBinding binding;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(getLayoutId());
-        ButterKnife.bind(this);
+//        setContentView(getLayoutId());
+//        ButterKnife.bind(this);
+        binding = inflateBinding();
+        setContentView(binding.getRoot());
         this.mContext = this;
         ActivityUtils.instance.addActivity(this);
         QMUIStatusBarHelper.translucent(this);
@@ -57,6 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         initView();
         initData();
     }
+    protected abstract ViewBinding inflateBinding();
 
     /**
      * 初始化数据

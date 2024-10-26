@@ -330,7 +330,7 @@ public class TransUtil
     /**
      * 数字字符串转ASCII码字符串
      * 
-     * @param String
+     * @param content
      *            字符串
      * @return ASCII字符串
      */
@@ -478,7 +478,7 @@ public class TransUtil
     /**
      * ASCII码字符串转数字字符串
      * 
-     * @param String
+     * @param content
      *            ASCII字符串
      * @return 字符串
      */

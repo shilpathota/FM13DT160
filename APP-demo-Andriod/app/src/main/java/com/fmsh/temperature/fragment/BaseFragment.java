@@ -3,21 +3,22 @@ package com.fmsh.temperature.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.viewbinding.ViewBinding;
 import com.fmsh.temperature.activity.MainActivity;
 
-import butterknife.ButterKnife;
+//import butterknife.ButterKnife;
 
 /**
  * Created by wyj on 2018/7/2.
  */
-public abstract class BaseFragment extends Fragment  implements View.OnClickListener{
+public abstract class BaseFragment<T extends ViewBinding> extends Fragment  implements View.OnClickListener{
 
-
+    protected T binding; // Generic binding to be initialized by child fragments
 
     protected abstract int setView();
 
@@ -33,6 +34,7 @@ public abstract class BaseFragment extends Fragment  implements View.OnClickList
 
 
     }
+    protected abstract T initializeBinding(LayoutInflater inflater, ViewGroup container);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,15 +42,14 @@ public abstract class BaseFragment extends Fragment  implements View.OnClickList
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(setView(), container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = initializeBinding(inflater, container); // Initialize binding in child
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this,view);
         init(view);
     }
 
@@ -88,6 +89,7 @@ public abstract class BaseFragment extends Fragment  implements View.OnClickList
     @Override
     public void onDestroy() {
         super.onDestroy();
+        binding=null;
     }
 
     @Override

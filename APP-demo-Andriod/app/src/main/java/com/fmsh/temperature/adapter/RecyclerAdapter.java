@@ -1,9 +1,9 @@
 package com.fmsh.temperature.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fmsh.temperature.R;
+import com.fmsh.temperature.databinding.ItemImFragmentBinding;
 import com.fmsh.temperature.listener.OnItemClickListener;
 import com.fmsh.temperature.util.UIUtils;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
@@ -18,8 +19,8 @@ import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+//import butterknife.BindView;
+//import butterknife.ButterKnife;
 
 /**
  * Created by wyj on 2018/7/9.
@@ -77,14 +78,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if(mHeaderView != null && viewType == TYPE_HEADER) {
+        if (mHeaderView != null && viewType == TYPE_HEADER) {
             return new HeaderViewHolder(mHeaderView);
         }
-        if(mFooterView != null && viewType == TYPE_FOOTER){
+        if (mFooterView != null && viewType == TYPE_FOOTER) {
             return new FoogerViewHolder(mFooterView);
         }
-        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_im_fragment, parent, false);
-        return new ViewHolder(layout);
+        ItemImFragmentBinding binding = ItemImFragmentBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -119,21 +121,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
 
     }
 
-    public void bindHolder(RecyclerView.ViewHolder holder, final int position){
+    public void bindHolder(RecyclerView.ViewHolder holder, final int position) {
         ViewHolder vh = (ViewHolder) holder;
         String title = mList.get(position);
-        vh.tvContent.setText(title);
-        vh.ivIcon.setImageResource(mImgId[position]);
-        vh.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnItemClickListener != null) {
-                    mOnItemClickListener.itemClickListener(position);
-                }
+        vh.binding.tvContent.setText(title);  // Access view through binding
+        vh.binding.image.setImageResource(mImgId[position]);
+        vh.itemView.setOnClickListener(v -> {
+            if (mOnItemClickListener != null) {
+                mOnItemClickListener.itemClickListener(position);
             }
         });
     }
-
     @Override
     public int getItemViewType(int position) {
         if (mHeaderView == null && mFooterView == null){
@@ -164,14 +162,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.image)
-        ImageView ivIcon;
-        @BindView(R.id.tvContent)
-        TextView tvContent;
+        private final ItemImFragmentBinding binding;  // Binding for item layout
 
-        ViewHolder(View view) {
-            super(view);
-            ButterKnife.bind(this, view);
+        ViewHolder(ItemImFragmentBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
     /**

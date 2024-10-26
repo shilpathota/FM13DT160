@@ -7,15 +7,21 @@ import android.os.Message;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.viewbinding.ViewBinding;
 import com.fmsh.temperature.R;
 import com.fmsh.temperature.activity.RecordActivity;
+import com.fmsh.temperature.databinding.FragmentImBinding;
+import com.fmsh.temperature.databinding.FragmentSettingBinding;
 import com.fmsh.temperature.util.HintDialog;
 import com.fmsh.temperature.util.LogUtil;
 import com.fmsh.temperature.util.MyConstant;
@@ -27,34 +33,34 @@ import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 
-import butterknife.BindView;
-import butterknife.OnClick;
-import butterknife.Unbinder;
+//import butterknife.BindView;
+//import butterknife.OnClick;
+//import butterknife.Unbinder;
 
 /**
  * Created by wyj on 2018/7/2.
  */
 public class SettingFragment extends BaseFragment {
+    private FragmentSettingBinding binding;
 
-
-    @BindView(R.id.tvDelay)
-    TextView tvDelay;
-    @BindView(R.id.tvInterval)
-    TextView tvInterval;
-    @BindView(R.id.tvMinTp)
-    TextView tvMinTp;
-    @BindView(R.id.tvMAxTp)
-    TextView tvMAxTp;
-    @BindView(R.id.tvMode)
-    TextView tvMode;
-    @BindView(R.id.tvCount)
-    TextView tvCount;
-    @BindView(R.id.applyConfigButton)
-    Button applyConfigButton;
-    @BindView(R.id.resultButton)
-    Button resultButton;
-    @BindView(R.id.resultFiledButton)
-    Button resultFiledButton;
+//    @BindView(R.id.tvDelay)
+//    TextView tvDelay;
+//    @BindView(R.id.tvInterval)
+//    TextView tvInterval;
+//    @BindView(R.id.tvMinTp)
+//    TextView tvMinTp;
+//    @BindView(R.id.tvMAxTp)
+//    TextView tvMAxTp;
+//    @BindView(R.id.tvMode)
+//    TextView tvMode;
+//    @BindView(R.id.tvCount)
+//    TextView tvCount;
+//    @BindView(R.id.applyConfigButton)
+//    Button applyConfigButton;
+//    @BindView(R.id.resultButton)
+//    Button resultButton;
+//    @BindView(R.id.resultFiledButton)
+//    Button resultFiledButton;
 
 
     @Override
@@ -65,10 +71,11 @@ public class SettingFragment extends BaseFragment {
     @Override
     protected void init(View view) {
 
-        tvDelay.setText(UIUtils.getString(R.string.text_measure_delay) + "   " + delayTime[SpUtils.getIntValue("delay", 1)]);
-        tvInterval.setText(UIUtils.getString(R.string.text_measure_interval) + "   " + intervals[SpUtils.getIntValue("interval", 2)]);
+        binding.tvDelay.setText(UIUtils.getString(R.string.text_measure_delay) + "   " + delayTime[SpUtils.getIntValue("delay", 1)]);
+        binding.tvInterval.setText(UIUtils.getString(R.string.text_measure_interval) + "   " + intervals[SpUtils.getIntValue("interval", 2)]);
 
         setCount();
+        setupClickListeners();
     }
 
     @Override
@@ -93,7 +100,7 @@ public class SettingFragment extends BaseFragment {
                 SpUtils.putIntValue("count", counts.length - 1);
             }
 
-            tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts[count]);
+            binding.tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts[count]);
 
         } else if (intValue == 1) {
             int count = SpUtils.getIntValue("count", 0);
@@ -103,7 +110,7 @@ public class SettingFragment extends BaseFragment {
                 SpUtils.putIntValue("count", counts1.length - 1);
             }
 
-            tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts1[count]);
+            binding.tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts1[count]);
         } else if (intValue == 2) {
             int count = SpUtils.getIntValue("count", 0);
             LogUtil.d("count" + count);
@@ -112,19 +119,19 @@ public class SettingFragment extends BaseFragment {
                 SpUtils.putIntValue("count", counts2.length - 1);
             }
 
-            tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts2[count]);
+            binding.tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts2[count]);
         } else if (intValue == 3) {
 
-            tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts3[SpUtils.getIntValue("count", 0)]);
+            binding.tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts3[SpUtils.getIntValue("count", 0)]);
         }
-        tvMinTp.setText(UIUtils.getString(R.string.text_min_tp) + "   " + SpUtils.getIntValue(MyConstant.min_limit0, 0) + "°C");
-        tvMAxTp.setText(UIUtils.getString(R.string.text_max_tp) + "   " + SpUtils.getIntValue(MyConstant.max_limit0, 20) + "°C");
+        binding.tvMinTp.setText(UIUtils.getString(R.string.text_min_tp) + "   " + SpUtils.getIntValue(MyConstant.min_limit0, 0) + "°C");
+        binding.tvMAxTp.setText(UIUtils.getString(R.string.text_max_tp) + "   " + SpUtils.getIntValue(MyConstant.max_limit0, 20) + "°C");
         if(intValue == 3){
-            tvMAxTp.setEnabled(false);
-            tvMinTp.setEnabled(false);
+            binding.tvMAxTp.setEnabled(false);
+            binding.tvMinTp.setEnabled(false);
         }else {
-            tvMAxTp.setEnabled(true);
-            tvMinTp.setEnabled(true);
+            binding.tvMAxTp.setEnabled(true);
+            binding.tvMinTp.setEnabled(true);
         }
     }
 
@@ -133,11 +140,11 @@ public class SettingFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         LogUtil.d("onResume");
-        if (resultButton != null) {
-            resultButton.setEnabled(true);
+        if (binding.resultButton != null) {
+            binding.resultButton.setEnabled(true);
         }
-        if (resultFiledButton != null) {
-            resultFiledButton.setEnabled(true);
+        if (binding.resultFiledButton != null) {
+            binding.resultFiledButton.setEnabled(true);
         }
     }
 
@@ -145,6 +152,11 @@ public class SettingFragment extends BaseFragment {
     @Override
     protected void initData(Bundle savedInstanceState) {
 
+    }
+
+    @Override
+    protected FragmentSettingBinding initializeBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentSettingBinding.inflate(inflater, container, false); // Inflate with View Binding
     }
 
     private void showSingleChoiceDialog() {
@@ -155,9 +167,9 @@ public class SettingFragment extends BaseFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         SpUtils.putIntValue(MyConstant.tpMode, which);
                         if (which == 0) {
-                            tvMode.setText(UIUtils.getString(R.string.text_measure_mode) + "   " + UIUtils.getString(R.string.text_measure_normal_mode));
+                            binding.tvMode.setText(UIUtils.getString(R.string.text_measure_mode) + "   " + UIUtils.getString(R.string.text_measure_normal_mode));
                         } else {
-                            tvMode.setText(UIUtils.getString(R.string.text_measure_mode) + "   " + UIUtils.getString(R.string.text_measure_compression_mode));
+                            binding.tvMode.setText(UIUtils.getString(R.string.text_measure_mode) + "   " + UIUtils.getString(R.string.text_measure_compression_mode));
                         }
                         dialog.dismiss();
 
@@ -167,115 +179,116 @@ public class SettingFragment extends BaseFragment {
         dialogBuilder.create(R.style.DialogTheme2).show();
     }
 
-    @OnClick({R.id.tvDelay, R.id.tvInterval, R.id.tvMode, R.id.tvCount, R.id.tvMinTp, R.id.tvMAxTp, R.id.applyConfigButton, R.id.resultButton, R.id.stopButton, R.id.resultFiledButton})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.tvDelay:
-                showNumpicker(delayTime, SpUtils.getIntValue("delay", 1), 1);
-                break;
-            case R.id.tvInterval:
-                showNumpicker(intervals, SpUtils.getIntValue("interval", 2), 2);
-                break;
-            case R.id.tvMode:
-                showSingleChoiceDialog();
-                break;
-            case R.id.tvCount:
-                int intValue = SpUtils.getIntValue(MyConstant.tpMode, 0);
-                if (intValue == 0) {
-                    showNumpicker(counts, SpUtils.getIntValue("count", 0), 3);
-                } else if (intValue == 1) {
-                    showNumpicker(counts1, SpUtils.getIntValue("count", 0), 3);
-                } else if (intValue == 2) {
-                    showNumpicker(counts2, SpUtils.getIntValue("count", 0), 3);
-                } else if (intValue == 3) {
-                    showNumpicker(counts3, SpUtils.getIntValue("count", 0), 3);
-                }
-                break;
-            case R.id.tvMinTp:
-                showNumpicker(thresholds, SpUtils.getIntValue(MyConstant.min_limit0 + "value", 12), 4);
-                break;
-            case R.id.tvMAxTp:
-                showNumpicker(thresholds, SpUtils.getIntValue(MyConstant.max_limit0 + "value", 27), 5);
-                break;
-            case R.id.applyConfigButton:
-                String delay = tvDelay.getText().toString().trim();
-                String[] split = delay.split(":");
-                if (split[1].contains("no delay")) {
-                    SpUtils.putIntValue(MyConstant.delayTime, 0);
-                } else if (split[1].contains("minutes")) {
-                    String[] s = split[1].split("minutes");
-                    SpUtils.putIntValue(MyConstant.delayTime, Integer.parseInt(s[0].trim()));
-                } else if (split[1].contains("hour")) {
-                    String[] s = split[1].split("hour");
-                    SpUtils.putIntValue(MyConstant.delayTime, Integer.parseInt(s[0].trim()) * 60);
-                }
-                String interval = tvInterval.getText().toString().trim();
-                String[] split1 = interval.split(":");
-                if (split1[1].contains("s") && !split1[1].contains("minutes")) {
-                    String s = split1[1].replace("s", "").trim();
-                    SpUtils.putIntValue(MyConstant.intervalTime, Integer.parseInt(s));
-                } else if (split1[1].contains("minutes")) {
-                    String minutes = split1[1].replace("minutes", "").trim();
-                    SpUtils.putIntValue(MyConstant.intervalTime, Integer.parseInt(minutes) * 60);
-                } else if (split1[1].contains("hour")) {
-                    String hour = split1[1].replace("hour", "").trim();
-                    SpUtils.putIntValue(MyConstant.intervalTime, Integer.parseInt(hour) * 60 * 60);
-                }
-                String count = tvCount.getText().toString().trim();
-                String[] split2 = count.split(":");
-                SpUtils.putIntValue(MyConstant.tpCount, Integer.parseInt(split2[1].trim()));
-                String minTp = tvMinTp.getText().toString().trim();
-                String[] split3 = minTp.split(":");
-                int min = Integer.parseInt(split3[1].replace("°C", "").trim());
-                SpUtils.putIntValue(MyConstant.min_limit0, min);
-                String maxTp = tvMAxTp.getText().toString().trim();
-                String[] split4 = maxTp.split(":");
-                int max = Integer.parseInt(split4[1].replace("°C", "").trim());
-                SpUtils.putIntValue(MyConstant.max_limit0, max);
-                if (min > max) {
-                    HintDialog.messageDialog(mContext, UIUtils.getString(R.string.text_min_max));
-                    return;
-                }
+    private void setupClickListeners() {
+        binding.tvDelay.setOnClickListener(v ->
+                showNumpicker(delayTime, SpUtils.getIntValue("delay", 1), 1)
+        );
 
-                mContext.mImFragment.mStatu = 7;
-                mContext.FLAG = 0;
-                mContext.nfcDialog();
-                break;
-            case R.id.resultButton:
-                //                resultButton.setEnabled(false);
-                //                Intent intent = new Intent(mContext, RecordActivity.class);
-                //                startActivity(intent);
-                //                mContext.FLAG = 1;
-                mContext.nfcDialog();
-                mContext.mImFragment.mStatu = 9;
-                mContext.mImFragment.isShowFiled = false;
-                mContext.FLAG = 0;
-                break;
-            case R.id.stopButton:
-                mContext.mImFragment.mStatu = 8;
-                mContext.FLAG = 0;
+        binding.tvInterval.setOnClickListener(v ->
+                showNumpicker(intervals, SpUtils.getIntValue("interval", 2), 2)
+        );
 
-                mContext.nfcDialog();
-                break;
-            case R.id.resultFiledButton:
-                //                resultFiledButton.setEnabled(false);
-                //                Intent intent1 = new Intent(mContext, RecordActivity.class);
-                //                Bundle bundle = new Bundle();
-                //                bundle.putBoolean("filed", true);
-                //                intent1.putExtras(bundle);
-                //                startActivity(intent1);
-                //                mContext.FLAG = 1;
-                mContext.nfcDialog();
-                mContext.mImFragment.mStatu = 9;
-                mContext.mImFragment.isShowFiled = true;
-                mContext.FLAG = 0;
-                break;
-            default:
-                break;
-        }
+        binding.tvMode.setOnClickListener(v -> showSingleChoiceDialog());
 
+        binding.tvCount.setOnClickListener(v -> {
+            int intValue = SpUtils.getIntValue(MyConstant.tpMode, 0);
+            if (intValue == 0) {
+                showNumpicker(counts, SpUtils.getIntValue("count", 0), 3);
+            } else if (intValue == 1) {
+                showNumpicker(counts1, SpUtils.getIntValue("count", 0), 3);
+            } else if (intValue == 2) {
+                showNumpicker(counts2, SpUtils.getIntValue("count", 0), 3);
+            } else if (intValue == 3) {
+                showNumpicker(counts3, SpUtils.getIntValue("count", 0), 3);
+            }
+        });
+
+        binding.tvMinTp.setOnClickListener(v ->
+                showNumpicker(thresholds, SpUtils.getIntValue(MyConstant.min_limit0 + "value", 12), 4)
+        );
+
+        binding.tvMAxTp.setOnClickListener(v ->
+                showNumpicker(thresholds, SpUtils.getIntValue(MyConstant.max_limit0 + "value", 27), 5)
+        );
+
+        binding.applyConfigButton.setOnClickListener(v -> applyConfig());
+
+        binding.resultButton.setOnClickListener(v -> {
+            mContext.nfcDialog();
+            mContext.mImFragment.mStatu = 9;
+            mContext.mImFragment.isShowFiled = false;
+            mContext.FLAG = 0;
+        });
+
+        binding.stopButton.setOnClickListener(v -> {
+            mContext.mImFragment.mStatu = 8;
+            mContext.FLAG = 0;
+            mContext.nfcDialog();
+        });
+
+        binding.resultFiledButton.setOnClickListener(v -> {
+            mContext.nfcDialog();
+            mContext.mImFragment.mStatu = 9;
+            mContext.mImFragment.isShowFiled = true;
+            mContext.FLAG = 0;
+        });
     }
 
+    private void applyConfig() {
+        // Handle delay
+        String delay = binding.tvDelay.getText().toString().trim();
+        String[] split = delay.split(":");
+        if (split[1].contains("no delay")) {
+            SpUtils.putIntValue(MyConstant.delayTime, 0);
+        } else if (split[1].contains("minutes")) {
+            String[] s = split[1].split("minutes");
+            SpUtils.putIntValue(MyConstant.delayTime, Integer.parseInt(s[0].trim()));
+        } else if (split[1].contains("hour")) {
+            String[] s = split[1].split("hour");
+            SpUtils.putIntValue(MyConstant.delayTime, Integer.parseInt(s[0].trim()) * 60);
+        }
+
+        // Handle interval
+        String interval = binding.tvInterval.getText().toString().trim();
+        String[] split1 = interval.split(":");
+        if (split1[1].contains("s") && !split1[1].contains("minutes")) {
+            String s = split1[1].replace("s", "").trim();
+            SpUtils.putIntValue(MyConstant.intervalTime, Integer.parseInt(s));
+        } else if (split1[1].contains("minutes")) {
+            String minutes = split1[1].replace("minutes", "").trim();
+            SpUtils.putIntValue(MyConstant.intervalTime, Integer.parseInt(minutes) * 60);
+        } else if (split1[1].contains("hour")) {
+            String hour = split1[1].replace("hour", "").trim();
+            SpUtils.putIntValue(MyConstant.intervalTime, Integer.parseInt(hour) * 60 * 60);
+        }
+
+        // Handle count
+        String count = binding.tvCount.getText().toString().trim();
+        String[] split2 = count.split(":");
+        SpUtils.putIntValue(MyConstant.tpCount, Integer.parseInt(split2[1].trim()));
+
+        // Handle min tp
+        String minTp = binding.tvMinTp.getText().toString().trim();
+        String[] split3 = minTp.split(":");
+        int min = Integer.parseInt(split3[1].replace("°C", "").trim());
+        SpUtils.putIntValue(MyConstant.min_limit0, min);
+
+        // Handle max tp
+        String maxTp = binding.tvMAxTp.getText().toString().trim();
+        String[] split4 = maxTp.split(":");
+        int max = Integer.parseInt(split4[1].replace("°C", "").trim());
+        SpUtils.putIntValue(MyConstant.max_limit0, max);
+
+        // Check min and max values
+        if (min > max) {
+            HintDialog.messageDialog(mContext, UIUtils.getString(R.string.text_min_max));
+            return;
+        }
+
+        mContext.mImFragment.mStatu = 7;
+        mContext.FLAG = 0;
+        mContext.nfcDialog();
+    }
     private String[] delayTime = {"0 minutes", "1 minutes", "2 minutes", " 5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour", "2 hour", "4 hour"};
     final private String[] intervals = {"1s", "2s", "5s", "6s", "8s", "10s", "12s", "15s", "20s", "25s", "30s", "35s", "40s", "50s", "60s", "75s", "90s", "100s", "120s", "5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour"};
     final private String[] counts = {"2", "3", "5", "8", "10", "20", "30", "50", "80", "100", "200", "300", "500", "800", "1000", "2000", "3000", "4000", "4864"};
@@ -286,7 +299,7 @@ public class SettingFragment extends BaseFragment {
     final private static int[] thresholdUnitIds = new int[]{R.string.celsius};
 
     public void showNumpicker(final String[] values, int selectedValue, final int type) {
-        final android.support.v7.app.AlertDialog.Builder alert = new android.support.v7.app.AlertDialog.Builder(mContext);
+        AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
         alert.setCancelable(false);
         LinearLayout linearLayout = new LinearLayout(mContext);
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -309,7 +322,7 @@ public class SettingFragment extends BaseFragment {
                 switch (type) {
                     case 1:
                         SpUtils.putIntValue("delay", value);
-                        tvDelay.setText(UIUtils.getString(R.string.text_measure_delay) + "   " + delayTime[value]);
+                        binding.tvDelay.setText(UIUtils.getString(R.string.text_measure_delay) + "   " + delayTime[value]);
                         if (value == 0) {
                             SpUtils.putIntValue(MyConstant.delayTime, 0);
                         } else if (0 < value && value < 7) {
@@ -339,7 +352,7 @@ public class SettingFragment extends BaseFragment {
                             SpUtils.putIntValue(MyConstant.intervalTime, Integer.parseInt(s));
                         }
                         //                        MyConstant.INTERVALTIME = Integer.parseInt(s);
-                        tvInterval.setText(UIUtils.getString(R.string.text_measure_interval) + "   " + intervals[value]);
+                        binding.tvInterval.setText(UIUtils.getString(R.string.text_measure_interval) + "   " + intervals[value]);
                         break;
                     case 3:
                         SpUtils.putIntValue("count", value);
@@ -347,24 +360,24 @@ public class SettingFragment extends BaseFragment {
                         //                        MyConstant.TPCOUNT = Integer.parseInt(timeValue);
                         int intValue = SpUtils.getIntValue(MyConstant.tpMode, 0);
                         if (intValue == 0) {
-                            tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts[value]);
+                            binding.tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts[value]);
                         } else if (intValue == 1) {
-                            tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts1[value]);
+                            binding.tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts1[value]);
                         } else if (intValue == 2) {
-                            tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts2[value]);
+                            binding.tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts2[value]);
                         } else if (intValue == 3) {
-                            tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts3[value]);
+                            binding.tvCount.setText(UIUtils.getString(R.string.text_measure_count) + "   " + counts3[value]);
                         }
                         break;
                     case 4:
                         SpUtils.putIntValue(MyConstant.min_limit0 + "value", value);
-                        tvMinTp.setText(UIUtils.getString(R.string.text_min_tp) + "   " + thresholds[value]);
+                        binding.tvMinTp.setText(UIUtils.getString(R.string.text_min_tp) + "   " + thresholds[value]);
                         SpUtils.putIntValue(MyConstant.min_limit0, Integer.parseInt(timeValue.replace("°C", "")));
 
                         break;
                     case 5:
                         SpUtils.putIntValue(MyConstant.max_limit0 + "value", value);
-                        tvMAxTp.setText(UIUtils.getString(R.string.text_max_tp) + "   " + thresholds[value]);
+                        binding.tvMAxTp.setText(UIUtils.getString(R.string.text_max_tp) + "   " + thresholds[value]);
                         SpUtils.putIntValue(MyConstant.max_limit0, Integer.parseInt(timeValue.replace("°C", "")));
                         break;
                     default:

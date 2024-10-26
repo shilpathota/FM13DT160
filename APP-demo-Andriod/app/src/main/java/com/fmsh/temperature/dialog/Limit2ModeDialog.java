@@ -2,8 +2,8 @@ package com.fmsh.temperature.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.fmsh.temperature.R;
 import com.fmsh.temperature.activity.MainActivity;
+import com.fmsh.temperature.databinding.Limit2ModeDialogBinding;
 import com.fmsh.temperature.util.HintDialog;
 import com.fmsh.temperature.util.MyConstant;
 import com.fmsh.temperature.util.SpUtils;
@@ -41,26 +42,32 @@ public class Limit2ModeDialog implements View.OnClickListener {
         this.mContext = context;
     }
 
+    private Limit2ModeDialogBinding binding;  // Add binding instance
+
     public void limit2Model() {
         mAlert = new AlertDialog.Builder(mContext);
-        View inflate = LayoutInflater.from(mContext).inflate(R.layout.limit2_mode_dialog, null);
-        TextView notes = inflate.findViewById(R.id.notes);
-        notes.setText(UIUtils.getString(R.string.notes) + "\n" +
-                "max_limit2 > max_limit1 > max_limit0\n"+"> min_limit0 > min_limit1 > min_limit2");
-        mMinLimit0 = inflate.findViewById(R.id.minLimit0);
-        mMinLimit1 = inflate.findViewById(R.id.minLimit1);
-        mMinLimit2 = inflate.findViewById(R.id.minLimit2);
-        mMaxLimit0 = inflate.findViewById(R.id.maxLimit0);
-        mMaxLimit1 = inflate.findViewById(R.id.maxLimit1);
-        mMaxLimit2 = inflate.findViewById(R.id.maxLimit2);
-        TextView tv_cancel = inflate.findViewById(R.id.tv_cancel);
-        TextView tv_confirm = inflate.findViewById(R.id.tv_confirm);
-        mMinLimit0.setOnClickListener(this);
-        mMinLimit1.setOnClickListener(this);
-        mMinLimit2.setOnClickListener(this);
-        mMaxLimit0.setOnClickListener(this);
-        mMaxLimit1.setOnClickListener(this);
-        mMaxLimit2.setOnClickListener(this);
+
+        // Inflate the layout using ViewBinding
+        binding = Limit2ModeDialogBinding.inflate(LayoutInflater.from(mContext));
+        View inflate = binding.getRoot();
+
+        // Set dialog notes text
+        binding.notes.setText(UIUtils.getString(R.string.notes) + "\n" +
+                "max_limit2 > max_limit1 > max_limit0\n" +
+                "> min_limit0 > min_limit1 > min_limit2");
+
+        // Assign views to variables directly from binding
+        mMinLimit0 = binding.minLimit0;
+        mMinLimit1 = binding.minLimit1;
+        mMinLimit2 = binding.minLimit2;
+        mMaxLimit0 = binding.maxLimit0;
+        mMaxLimit1 = binding.maxLimit1;
+        mMaxLimit2 = binding.maxLimit2;
+
+        TextView tv_cancel = binding.tvCancel;
+        TextView tv_confirm = binding.tvConfirm;
+
+        // Set text and click listeners
         mMinLimit0.setText("min_limit0:   " + SpUtils.getIntValue(MyConstant.min_limit0, 12) + "°C");
         mMinLimit1.setText("min_limit1:   " + SpUtils.getIntValue(MyConstant.min_limit1, 5) + "°C");
         mMinLimit2.setText("min_limit2:   " + SpUtils.getIntValue(MyConstant.min_limit2, 2) + "°C");
@@ -68,27 +75,19 @@ public class Limit2ModeDialog implements View.OnClickListener {
         mMaxLimit1.setText("max_limit1:   " + SpUtils.getIntValue(MyConstant.max_limit1, 25) + "°C");
         mMaxLimit2.setText("max_limit2:   " + SpUtils.getIntValue(MyConstant.max_limit2, 27) + "°C");
 
-
+        // Set view to the alert dialog
         mAlert.setView(inflate);
-
         mAlertDialog = mAlert.create();
         mAlertDialog.show();
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAlertDialog.dismiss();
-            }
-        });
-        tv_confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnConfirmClick != null) {
-                    mOnConfirmClick.onClick(mAlertDialog);
-                }
+
+        // Cancel and Confirm button listeners
+        tv_cancel.setOnClickListener(v -> mAlertDialog.dismiss());
+        tv_confirm.setOnClickListener(v -> {
+            if (mOnConfirmClick != null) {
+                mOnConfirmClick.onClick(mAlertDialog);
             }
         });
     }
-
 
     final private static String[] thresholds = new String[]{"-40°C", "-30°C", "-20°C", "-18°C", "-15°C", "-10°C", "-8°C", "-5°C", "-4°C", "-3°C", "-2°C", "-1°C", "0°C", "1°C", "2°C", "3°C", "4°C", "5°C", "8°C", "10°C", "15°C", "18°C", "20°C", "23°C", "25°C", "30°C", "35°C", "40°C", "50°C", "60°C", "70°C", "80°C"}; /* Celsius */
     final private static int[] thresholdUnitIds = new int[]{R.string.celsius};
@@ -143,31 +142,27 @@ public class Limit2ModeDialog implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.minLimit0:
-                pickerDialog(SpUtils.getIntValue(MyConstant.min_limit0 + "value", 12), MyConstant.min_limit0, mMinLimit0);
-                break;
-            case R.id.minLimit1:
-                pickerDialog(SpUtils.getIntValue(MyConstant.min_limit1 + "value", 5), MyConstant.min_limit1, mMinLimit1);
-                break;
-            case R.id.minLimit2:
-                pickerDialog(SpUtils.getIntValue(MyConstant.min_limit2 + "value", 2), MyConstant.min_limit2, mMinLimit2);
-                break;
-            case R.id.maxLimit0:
-                pickerDialog(SpUtils.getIntValue(MyConstant.max_limit0 + "value", 22), MyConstant.max_limit0, mMaxLimit0);
-                break;
-            case R.id.maxLimit1:
-                pickerDialog(SpUtils.getIntValue(MyConstant.max_limit1 + "value", 25), MyConstant.max_limit1, mMaxLimit1);
-                break;
-            case R.id.maxLimit2:
-                pickerDialog(SpUtils.getIntValue(MyConstant.max_limit2 + "value", 27), MyConstant.max_limit2, mMaxLimit2);
-                break;
-            default:
-                break;
-
+        if (v == binding.minLimit0) {
+            pickerDialog(SpUtils.getIntValue(MyConstant.min_limit0 + "value", 12),
+                    MyConstant.min_limit0, binding.minLimit0);
+        } else if (v == binding.minLimit1) {
+            pickerDialog(SpUtils.getIntValue(MyConstant.min_limit1 + "value", 5),
+                    MyConstant.min_limit1, binding.minLimit1);
+        } else if (v == binding.minLimit2) {
+            pickerDialog(SpUtils.getIntValue(MyConstant.min_limit2 + "value", 2),
+                    MyConstant.min_limit2, binding.minLimit2);
+        } else if (v == binding.maxLimit0) {
+            pickerDialog(SpUtils.getIntValue(MyConstant.max_limit0 + "value", 22),
+                    MyConstant.max_limit0, binding.maxLimit0);
+        } else if (v == binding.maxLimit1) {
+            pickerDialog(SpUtils.getIntValue(MyConstant.max_limit1 + "value", 25),
+                    MyConstant.max_limit1, binding.maxLimit1);
+        } else if (v == binding.maxLimit2) {
+            pickerDialog(SpUtils.getIntValue(MyConstant.max_limit2 + "value", 27),
+                    MyConstant.max_limit2, binding.maxLimit2);
         }
-
     }
+
 
     public boolean checkLimitData() {
         int minLimit0 = SpUtils.getIntValue(MyConstant.min_limit0, 0);

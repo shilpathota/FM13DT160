@@ -1,6 +1,6 @@
 package com.fmsh.temperature.util;
 
-import android.support.v7.app.AlertDialog;
+import 	androidx.appcompat.app.AlertDialog;
 
 
 public interface CommentDialogListener {

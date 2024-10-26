@@ -12,10 +12,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,7 +25,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.viewbinding.ViewBinding;
 import com.fmsh.temperature.R;
+import com.fmsh.temperature.databinding.FragmentRecordBinding;
 import com.fmsh.temperature.listener.OnBitmapResultListener;
 import com.fmsh.temperature.tools.BroadcastManager;
 import com.fmsh.temperature.util.ActivityUtils;
@@ -66,19 +68,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import butterknife.BindView;
 
-/**
- * @author wuyajiang
- * @date 2019/9/18
- */
 public class RecordActivity extends BaseActivity {
-    @BindView(R.id.graphView)
-    GraphView graphView;
-    @BindView(R.id.secondGraphView)
-    GraphView secondGraphView;
-    @BindView(R.id.topbar)
-    QMUITopBarLayout topbar;
 
     private Handler mHandler = new MyHandler(this);
 
@@ -87,26 +78,31 @@ public class RecordActivity extends BaseActivity {
     private QMUIDialog mQmuiDialog;
     private boolean mFiled;
     private String mUid;
-
+    private FragmentRecordBinding binding;
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_record;
+    }
+
+    @Override
+    protected FragmentRecordBinding inflateBinding() {
+        return FragmentRecordBinding.inflate(getLayoutInflater());
     }
 
 
     @Override
     protected void initView() {
         mFiled = getIntent().getBooleanExtra("filed", false);
-        initGraph(graphView, true);
-        initGraph(secondGraphView, true);
+        initGraph(binding.graphView, true);
+        initGraph(binding.secondGraphView, true);
         isSendBroadCast = true;
-        topbar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
+        binding.topbar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        topbar.setTitle(R.string.text_data);
+        binding.topbar.setTitle(R.string.text_data);
         nfcDialog();
     }
 
@@ -319,28 +315,28 @@ public class RecordActivity extends BaseActivity {
         }
         if (mTpList.size() > 1) {
             addLimitLine(Double.parseDouble(data[9]),Double.parseDouble(data[8]));
-            graphView.removeAllSeries();
-            graphView.getSecondScale().removeAllSeries();
+            binding.graphView.removeAllSeries();
+            binding.graphView.getSecondScale().removeAllSeries();
             LineGraphSeries lineGraphSeries = new LineGraphSeries(dataPoints);
             lineGraphSeries.setDrawDataPoints(true);
             lineGraphSeries.setDataPointsRadius(3.5f);
             lineGraphSeries.setDrawBackground(false);
             lineGraphSeries.setColor(0xFFFF0000);
             lineGraphSeries.setAnimated(true);
-            graphView.addSeries(lineGraphSeries);
+            binding.graphView.addSeries(lineGraphSeries);
             long time = mDateList.get(0).getTime();
             long time1 = mDateList.get(mDateList.size() - 1).getTime();
             if(time == time1){
                 time1 = System.currentTimeMillis();
             }
-            graphView.getViewport().setMinX(time);
-            graphView.getViewport().setMaxX(time1);
+            binding.graphView.getViewport().setMinX(time);
+            binding.graphView.getViewport().setMaxX(time1);
             if(filedList.size() > 0 && mFiled){
                 LineGraphSeries lineGraphSeries1 = new LineGraphSeries(dataPointsFiled);
                 lineGraphSeries1.setDrawDataPoints(true);
                 lineGraphSeries1.setDataPointsRadius(3.5f);
                 lineGraphSeries1.setAnimated(true);
-                graphView.getSecondScale().addSeries(lineGraphSeries1);
+                binding.graphView.getSecondScale().addSeries(lineGraphSeries1);
             }
             lineGraphSeries.setOnDataPointTapListener(new OnDataPointTapListener() {
                 @Override
@@ -433,8 +429,8 @@ public class RecordActivity extends BaseActivity {
     }
 
     private void addLimitLine(double height, double low){
-        secondGraphView.removeAllSeries();
-        secondGraphView.getSecondScale().removeAllSeries();
+        binding.secondGraphView.removeAllSeries();
+        binding.secondGraphView.getSecondScale().removeAllSeries();
         long time = mDateList.get(0).getTime();
         long time1 = mDateList.get(mDateList.size() - 1).getTime();
         if(time == time1){
@@ -448,15 +444,15 @@ public class RecordActivity extends BaseActivity {
         lineGraphSeries.setColor(0xffFF0000);
 
         lineGraphSeries.setDrawBackground(false);
-        secondGraphView.addSeries(lineGraphSeries);
-        secondGraphView.getViewport().setMinX(time);
-        secondGraphView.getViewport().setMaxX(time1);
+        binding.secondGraphView.addSeries(lineGraphSeries);
+        binding.secondGraphView.getViewport().setMinX(time);
+        binding.secondGraphView.getViewport().setMaxX(time1);
         dataPoint[0] = new DataPoint(new Date(time),low);
         dataPoint[1] = new DataPoint(new Date(time1),low);
         LineGraphSeries lineGraphSeries1 = new LineGraphSeries(dataPoint);
         lineGraphSeries1.setColor(0xff0000ff);
         lineGraphSeries1.setAnimated(true);
-        secondGraphView.getSecondScale().addSeries(lineGraphSeries1);
+        binding.secondGraphView.getSecondScale().addSeries(lineGraphSeries1);
 
 
     }

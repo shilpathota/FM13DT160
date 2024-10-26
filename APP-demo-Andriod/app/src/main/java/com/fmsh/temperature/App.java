@@ -3,7 +3,7 @@ package com.fmsh.temperature;
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fmsh.nfcinstruct.GeneralNFC;
 import com.fmsh.temperature.util.LogUtil;

@@ -11,14 +11,16 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 
+import androidx.viewbinding.ViewBinding;
 import com.fmsh.temperature.R;
+import com.fmsh.temperature.databinding.ActivityMainBinding;
 import com.fmsh.temperature.fragment.BaseFragment;
 import com.fmsh.temperature.fragment.IMFragment;
 import com.fmsh.temperature.fragment.SettingFragment;
@@ -32,19 +34,21 @@ import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogAction;
 
-import butterknife.BindView;
-import butterknife.OnClick;
+//import butterknife.BindView;
+//import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity {
 
-    @BindView(R.id.topbar)
-    QMUITopBarLayout topbar;
-    @BindView(R.id.fl_fragment)
-    FrameLayout flFragment;
-    @BindView(R.id.cb_lab1)
-    CheckBox cbLab1;
-    @BindView(R.id.cb_lab2)
-    CheckBox cbLab2;
+//    @BindView(R.id.topbar)
+//    QMUITopBarLayout topbar;
+//    @BindView(R.id.fl_fragment)
+//    FrameLayout flFragment;
+//    @BindView(R.id.cb_lab1)
+//    CheckBox cbLab1;
+//    @BindView(R.id.cb_lab2)
+//    CheckBox cbLab2;
+private ActivityMainBinding binding;
+
     public IMFragment mImFragment;
     private SettingFragment mSettingFragment;
     /**
@@ -56,6 +60,11 @@ public class MainActivity extends BaseActivity {
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
+    }
+
+    @Override
+    protected ActivityMainBinding inflateBinding() {
+        return ActivityMainBinding.inflate(getLayoutInflater());
     }
 
     @Override
@@ -81,10 +90,15 @@ public class MainActivity extends BaseActivity {
 
         }
 //
-        topbar.setTitle(UIUtils.getString(R.string.text_lab1));
-        topbar.addLeftTextButton(UIUtils.getString(R.string.text_version)+version,0x124);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        topbar.addRightImageButton(R.mipmap.more,0x111).setOnClickListener(new View.OnClickListener() {
+        binding.topbar.setTitle(UIUtils.getString(R.string.text_lab1));
+        binding.topbar.addLeftTextButton(UIUtils.getString(R.string.text_version) + version, 0x124);
+//        topbar.setTitle(UIUtils.getString(R.string.text_lab1));
+//        topbar.addLeftTextButton(UIUtils.getString(R.string.text_version)+version,0x124);
+
+        binding.topbar.addRightImageButton(R.mipmap.more,0x111).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mImFragment != null) {
@@ -100,7 +114,8 @@ public class MainActivity extends BaseActivity {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.add(R.id.fl_fragment, mImFragment).commit();
         }
-
+        binding.cbLab1.setOnClickListener(v -> handleLab1Click());
+        binding.cbLab2.setOnClickListener(v -> handleLab2Click());
     }
 
     public void switchFragment(Fragment fromFragment, BaseFragment nextFragment) {
@@ -129,22 +144,17 @@ public class MainActivity extends BaseActivity {
         super.onStart();
     }
 
-
-
-    @OnClick({R.id.cb_lab1, R.id.cb_lab2})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.cb_lab1:
+    private void handleLab1Click() {
                 if (mImFragment == null) {
                     mImFragment = new IMFragment();
                 }
                 FLAG = 0;
                 mImFragment.mStatu = 0;
-                topbar.setTitle(UIUtils.getString(R.string.text_lab1));
+                binding.topbar.setTitle(UIUtils.getString(R.string.text_lab1));
                 switchFragment(mSettingFragment, mImFragment);
-                cbLab1.setChecked(true);
-                cbLab2.setChecked(false);
-                topbar.addRightImageButton(R.mipmap.more,0x111).setOnClickListener(new View.OnClickListener() {
+                binding.cbLab1.setChecked(true);
+                binding.cbLab2.setChecked(false);
+                binding.topbar.addRightImageButton(R.mipmap.more,0x111).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (mImFragment != null) {
@@ -152,24 +162,20 @@ public class MainActivity extends BaseActivity {
                         }
                     }
                 });
-                break;
-            case R.id.cb_lab2:
+    }
+
+    private void handleLab2Click() {
                 if (mSettingFragment == null) {
 
                     mSettingFragment = new SettingFragment();
                 }
                 FLAG = 1;
-                topbar.setTitle(UIUtils.getString(R.string.text_lab2));
+                binding.topbar.setTitle(UIUtils.getString(R.string.text_lab2));
                 switchFragment(mImFragment, mSettingFragment);
-                cbLab1.setChecked(false);
-                cbLab2.setChecked(true);
-                topbar.removeAllRightViews();
-                break;
-            default:
-                break;
-        }
+                binding.cbLab1.setChecked(false);
+                binding.cbLab2.setChecked(true);
+                binding.topbar.removeAllRightViews();
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -215,11 +221,8 @@ public class MainActivity extends BaseActivity {
 
         NfcManager manager = (NfcManager) context.getSystemService(Context.NFC_SERVICE);
         NfcAdapter adapter = manager.getDefaultAdapter();
-        if (adapter != null && adapter.isEnabled()) {
-            // adapter存在，能启用
-            return true;
-        }
-        return false;
+        // adapter存在，能启用
+        return adapter != null && adapter.isEnabled();
 
     }
 
@@ -239,32 +242,41 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        LogUtil.d(requestCode+ "---"+resultCode);
-        if(requestCode == 100){
-            if(!hasNfc(this)){
+        LogUtil.d(requestCode + " --- " + resultCode);
+
+        if (requestCode == 100) {
+            if (!hasNfc(this)) {
+                // Ensure that the dialog is shown only if NFC is not available.
                 showDialog();
+            } else {
+                LogUtil.d("NFC enabled successfully.");
             }
         }
     }
 
-    private void showDialog(){
-        QMUIDialog qmuiDialog = new QMUIDialog.MessageDialogBuilder(mContext)
+    private void showDialog() {
+        QMUIDialog qmuiDialog = new QMUIDialog.MessageDialogBuilder(this)
                 .setTitle(UIUtils.getString(R.string.tips))
                 .setMessage(UIUtils.getString(R.string.open_nfc))
                 .addAction(UIUtils.getString(R.string.text_cancel), new QMUIDialogAction.ActionListener() {
                     @Override
                     public void onClick(QMUIDialog dialog, int index) {
                         dialog.dismiss();
-                        finish();
+                        // Instead of directly finishing, show a message or perform another action.
+                        // You may log this event or return to a previous activity.
+                        LogUtil.d("NFC not enabled, staying in app.");
                     }
-                }).addAction(UIUtils.getString(R.string.setting), new QMUIDialogAction.ActionListener() {
+                })
+                .addAction(UIUtils.getString(R.string.setting), new QMUIDialogAction.ActionListener() {
                     @Override
                     public void onClick(QMUIDialog dialog, int index) {
                         dialog.dismiss();
+                        // Open NFC settings to allow the user to enable NFC.
                         startAppSettings();
-
                     }
-                }).create();
+                })
+                .create();
+
         qmuiDialog.show();
     }
 

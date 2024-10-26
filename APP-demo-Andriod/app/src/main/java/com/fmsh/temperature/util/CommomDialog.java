@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fmsh.temperature.R;
+import com.fmsh.temperature.databinding.DialogPromptBinding;
 
 
 /**
@@ -167,20 +168,19 @@ public class CommomDialog extends AlertDialog implements View.OnClickListener {
         //        }
 
     }
+    private DialogPromptBinding binding;
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnCancel:
-                if (listener != null) {
-                    listener.onClick(this, false);
-                }
-                break;
-            case R.id.btnConfirm:
-                if (listener != null) {
-                    listener.onClick(this, true);
-                }
-                break;
+        if(v==binding.btnCancel) {
+            if (listener != null) {
+                listener.onClick(this, false);
+            }
+        }
+        else if(v==binding.btnConfirm){
+            if (listener != null) {
+                listener.onClick(this, true);
+            }
         }
     }
 

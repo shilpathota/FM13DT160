@@ -1,17 +1,16 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jakewharton.butterknife'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
 
 
     defaultConfig {
+        namespace "com.fmsh.nfcinstruct"
+        compileSdkVersion 35
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
-        versionCode parent.ext.versionCode
-        versionName parent.ext.versionName
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
     }
 
@@ -26,4 +25,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.13.2'
+    implementation 'com.jakewharton:butterknife:10.2.3'
+    annotationProcessor('com.jakewharton:butterknife-compiler:10.2.3')
 }

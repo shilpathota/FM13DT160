@@ -1,21 +1,22 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.jakewharton.butterknife'
 
 android {
-    compileSdkVersion parent.ext.compileSdkVersion
+    compileSdkVersion 35
     defaultConfig {
-        applicationId "com.fmsh.DT160"
+        namespace "com.fmsh.temperature"
         minSdkVersion parent.ext.minSdkVersion
         targetSdkVersion parent.ext.targetSdkVersion
         versionCode parent.ext.versionCode
         versionName parent.ext.versionName
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
         debug {
         }
         release  {
             storeFile file('keystore/DT160.jks')
-            keyAlias 'DT160'
+            keyAlias 'key1'
             storePassword '123456'
             keyPassword '123456'
         }
@@ -44,7 +45,9 @@ android {
             }
         }
     }
-
+    viewBinding {
+        enabled = true
+    }
 
     packagingOptions { exclude 'com/itextpdf/text/pdf/fonts/cmap_info.txt' }
 }
@@ -53,20 +56,13 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation files('libs/itextg-5.5.10.jar')
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation libSupportButterknife
-    annotationProcessor libSupportButterknifeAnnotationProcessor
+//    implementation 'com.jakewharton:butterknife:10.2.3'
+//    annotationProcessor('com.jakewharton:butterknife-compiler:10.2.3')
     implementation libSupportRecyclerView
-    implementation libSupportDesign
+    implementation 'com.google.android.material:material:1.12.0'
     implementation libSupportAppcompat_v7
-    implementation libSupportAppcompat_v4
     implementation 'com.jjoe64:graphview:4.2.2'
     implementation 'com.orhanobut:logger:1.15'
-    implementation 'com.qmuiteam:qmui:1.4.0'
-    implementation 'com.qmuiteam:arch:0.6.1'
-    annotationProcessor "com.qmuiteam:arch-compiler:0.6.1"
     //写excel文件
     implementation files('libs/jxl.jar')
     implementation project(path: ':nfcinstruct')
@@ -74,5 +70,34 @@ dependencies {
     implementation 'com.itextpdf:itext-asian:5.2.0'
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation group: 'com.qmuiteam', name: 'qmui', version: '2.1.0'
+    implementation group: 'com.qmuiteam', name: 'arch', version: '2.1.0'
+    annotationProcessor "com.qmuiteam:arch-compiler:2.1.0"
+    // Core AndroidX libraries for testing
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
+    implementation 'androidx.annotation:annotation:1.9.0'
+    // Add core library to resolve InstrumentationRegistry issue
+    androidTestImplementation 'androidx.test:core:1.6.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+//    implementation files('libs/arch-2.1.0-sources.jar')
+//    annotationProcessor files('libs/arch-compiler-2.1.0.jar')
+
+
+}
+tasks.withType(JavaCompile).configureEach {
+    options.fork = true
+    options.forkOptions.jvmArgs += [
+            '--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED',
+    ]
 }

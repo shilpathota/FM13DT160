@@ -12,8 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.viewbinding.ViewBinding;
 import com.fmsh.nfcinstruct.GeneralNFC;
 import com.fmsh.temperature.R;
+import com.fmsh.temperature.databinding.ActivityNfcCommandBinding;
 import com.fmsh.temperature.tools.BroadcastManager;
 import com.fmsh.temperature.util.ActivityUtils;
 import com.fmsh.temperature.util.HintDialog;
@@ -25,30 +27,26 @@ import com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton;
 
 import java.lang.ref.WeakReference;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+//import butterknife.BindView;
+//import butterknife.ButterKnife;
+//import butterknife.OnClick;
 
-/**
- * @author wuyajiang
- * @date 2020/8/19
- */
 public class NfcCommandActivity extends BaseActivity {
-    @BindView(R.id.topbar)
-    QMUITopBarLayout topbar;
-    @BindView(R.id.image)
-    ImageView image;
-    @BindView(R.id.text)
-    TextView text;
-    @BindView(R.id.et_input)
-    EditText etInput;
-    @BindView(R.id.ll_container)
-    LinearLayout llContainer;
-    @BindView(R.id.btn_send)
-    QMUIRoundButton btnSend;
-    @BindView(R.id.tvContent)
+//    @BindView(R.id.topbar)
+//    QMUITopBarLayout topbar;
+//    @BindView(R.id.image)
+//    ImageView image;
+//    @BindView(R.id.text)
+//    TextView text;
+//    @BindView(R.id.et_input)
+//    EditText etInput;
+//    @BindView(R.id.ll_container)
+//    LinearLayout llContainer;
+//    @BindView(R.id.btn_send)
+//    QMUIRoundButton btnSend;
+//    @BindView(R.id.tvContent)
     TextView tvContent;
-
+    private ActivityNfcCommandBinding binding;
     private StringBuffer mBuffer = new StringBuffer();
     private Handler mHandler = new MyHandler(this);
     private String mSendData;
@@ -59,25 +57,35 @@ public class NfcCommandActivity extends BaseActivity {
     }
 
     @Override
+    protected ActivityNfcCommandBinding inflateBinding() {
+        return ActivityNfcCommandBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
     protected void initData() {
-        topbar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
+        binding.topbar.addLeftBackImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        topbar.setTitle(R.string.nfc_instruct);
-
+        binding.topbar.setTitle(R.string.nfc_instruct);
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityNfcCommandBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
     }
 
     @Override
     protected void initView() {
-
+        binding.btnSend.setOnClickListener(v -> onViewClicked());
     }
 
-    @OnClick(R.id.btn_send)
+
     public void onViewClicked() {
-        mSendData = etInput.getText().toString().trim();
+        mSendData = binding.etInput.getText().toString().trim();
         if(mSendData.isEmpty()){
             HintDialog.messageDialog(mContext,UIUtils.getString(R.string.empty_command));
             return;

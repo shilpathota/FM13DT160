@@ -1,7 +1,7 @@
 package com.fmsh.temperature.util;
 
 
-import com.fmsh.temperature.BuildConfig;
+//import com.fmsh.temperature.BuildConfig;
 import com.orhanobut.logger.Logger;
 
 
@@ -13,7 +13,7 @@ public class LogUtil {
      * 是否开启debug
      * 注意：使用Eclipse打包的时候记得取消Build Automatically，否则一直是true
      */
-    private static boolean isDebug= BuildConfig.DEBUG;
+    private static boolean isDebug= true;
     public static String TAG = "LogUtil";
 
 

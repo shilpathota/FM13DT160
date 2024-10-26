@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 
-import com.fmsh.nfcinstruct.BuildConfig;
 import com.fmsh.nfcinstruct.callback.OnResultCallback;
 import com.fmsh.nfcinstruct.utils.LogUtil;
 import com.fmsh.nfcinstruct.utils.TransUtil;

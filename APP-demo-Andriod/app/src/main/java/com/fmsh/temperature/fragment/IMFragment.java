@@ -16,13 +16,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.util.Log;
@@ -36,9 +36,12 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.viewbinding.ViewBinding;
 import com.fmsh.temperature.R;
 import com.fmsh.temperature.activity.NfcCommandActivity;
 import com.fmsh.temperature.adapter.RecyclerAdapter;
+import com.fmsh.temperature.databinding.FragmentImBinding;
+import com.fmsh.temperature.databinding.ItemImFragmentBinding;
 import com.fmsh.temperature.decorator.GridDividerItemDecoration;
 import com.fmsh.temperature.dialog.Limit2ModeDialog;
 import com.fmsh.temperature.listener.OnItemClickListener;
@@ -76,15 +79,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import butterknife.BindView;
 
 /**
  * @author wuyajiang
  * @date 2019/9/12
  */
 public class IMFragment extends BaseFragment {
-    @BindView(R.id.recyclerView)
-    RecyclerView mRecyclerView;
+    private FragmentImBinding binding;
     private UiHandler mUiHandler = new UiHandler(this);
     private QMUICommonListItemView mItemView;
     private QMUICommonListItemView mItemView1;
@@ -131,7 +132,11 @@ public class IMFragment extends BaseFragment {
         super.onPause();
         this.isVisibleToUser = false;
     }
-
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentImBinding.inflate(inflater, container, false); // Inflate ViewBinding
+        return binding.getRoot(); // Return root view
+    }
     @Override
     protected void init(View view) {
         mGroupListView = new QMUIGroupListView(mContext);
@@ -139,13 +144,13 @@ public class IMFragment extends BaseFragment {
         mRecyclerAdapter.setHeaderView(mGroupListView);
 
         int spanCount = 3;
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), spanCount));
-        mRecyclerView.addItemDecoration(new GridDividerItemDecoration(getContext(), spanCount, 0));
-        mRecyclerView.setAdapter(mRecyclerAdapter);
+        binding.recyclerView.setLayoutManager(new GridLayoutManager(getContext(), spanCount));
+        binding.recyclerView.addItemDecoration(new GridDividerItemDecoration(getContext(), spanCount, 0));
+        binding.recyclerView.setAdapter(mRecyclerAdapter);
         List<String> strings = Arrays.asList(mTile);
         mRecyclerAdapter.setList(strings);
 
-        mRecyclerView.setNestedScrollingEnabled(false);
+        binding.recyclerView.setNestedScrollingEnabled(false);
         mItemView = createItem(UIUtils.getString(R.string.text_main10));
         mItemView1 = createItem(UIUtils.getString(R.string.text_main1));
         mItemView2 = createItem(UIUtils.getString(R.string.text_main7));
@@ -279,6 +284,12 @@ public class IMFragment extends BaseFragment {
 
             }
         });
+    }
+
+
+    @Override
+    protected FragmentImBinding initializeBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentImBinding.inflate(inflater,container,false);
     }
 
     private int mWhich = 0; //选择的数据存储模式
@@ -697,7 +708,7 @@ public class IMFragment extends BaseFragment {
                         }
                     }
                 })
-                .create(R.style.QMUI_Dialog);
+                .create(com.qmuiteam.qmui.R.style.QMUI_Dialog);
         mPwdDialoag.show();
     }
 
